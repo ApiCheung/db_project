@@ -7,6 +7,9 @@
  *Author: Esmee Zhang
  */
 ?>
-<php
+<?php
     echo "test"
 ?>
+<?php
+echo "make change"
+>
