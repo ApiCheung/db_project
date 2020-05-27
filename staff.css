@@ -1,0 +1,64 @@
+
+
+
+
+
+
+/* Lists */
+
+table {
+  border-collapse: collapse;
+  vertical-align: top;
+}
+
+table.list {
+  width: 100%;
+}
+
+table.list tr td {
+  border: 1px solid #999999;
+}
+
+table.list tr th {
+  border: 1px solid #fafbfc;
+  background: #c7ea8e;
+  color: #0a0a0a;
+  text-align: left;
+}
+
+/* Forms */
+
+dl {
+  clear: both;
+  overflow: hidden;
+  margin: 0.5em 0;
+}
+
+dt {
+  float: left;
+  font-weight: bold;
+  width: 125px;
+}
+
+dd {
+  float: left;
+  margin-left: 1em;
+}
+
+a:link{
+  color: #c7ea8e;
+  text-decoration:none;
+
+}
+a:visited {
+  color:#c7ea8e;
+  text-decoration:none;
+}
+a:hover {
+  color:#000000;
+  text-decoration:none;
+}
+
+
+
+

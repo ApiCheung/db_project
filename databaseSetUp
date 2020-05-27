@@ -1,0 +1,157 @@
+
+CREATE TABLE auto_insurance (
+    insurance_id INT(8) NOT NULL
+);
+ALTER TABLE auto_insurance ADD CONSTRAINT auto_insurance_pk PRIMARY KEY ( insurance_id );
+
+CREATE TABLE customer (
+                          customer_id         INT(8) NOT NULL,
+                          customer_firstname  VARCHAR(30) NOT NULL,
+                          customer_lastname   VARCHAR(30) NOT NULL,
+                          costomer_street     VARCHAR(30) NOT NULL,
+                          customer_city       VARCHAR(30) NOT NULL,
+                          customer_state      VARCHAR(20) NOT NULL,
+                          customer_zip        INT(5) NOT NULL,
+                          customer_gender     CHAR(1),
+                          martial             CHAR(1) NOT NULL,
+                          customer_type       CHAR(1) NOT NULL,
+                          password            VARCHAR(20) NOT NULL
+);
+ALTER TABLE customer ADD CONSTRAINT customer_pk PRIMARY KEY ( customer_id );
+
+CREATE TABLE driver (
+                        driver_id         INT(8) NOT NULL,
+                        driver_license    INT(9) NOT NULL,
+                        driver_firstname  VARCHAR(30) NOT NULL,
+                        driver_lastname   VARCHAR(30) NOT NULL,
+                        driver_birthdate  DATE NOT NULL
+);
+ALTER TABLE driver ADD CONSTRAINT driver_pk PRIMARY KEY ( driver_id );
+
+CREATE TABLE home (
+                      home_id                      INT(8) NOT NULL,
+                      pur_date                     DATE NOT NULL,
+                      pur_value                    DECIMAL(6, 2) NOT NULL,
+                      home_area                    DECIMAL(6, 2) NOT NULL,
+                      home_type                    CHAR(1) NOT NULL,
+                      fire_not                     INT NOT NULL,
+                      home_security                INT NOT NULL,
+                      swimming_pool                CHAR(1),
+                      basement                     INT NOT NULL,
+                      insurance_id  INT(8) NOT NULL
+);
+
+ALTER TABLE home ADD CONSTRAINT home_pk PRIMARY KEY ( home_id );
+
+CREATE TABLE insurance (
+                           insurance_id          INT(8) NOT NULL,
+                           start_date            DATE NOT NULL,
+                           end_date              DATE NOT NULL,
+                           insurance_amount      DECIMAL(6, 2) NOT NULL,
+                           insurance_status      CHAR(1) NOT NULL,
+                           insurance_type        CHAR(1) NOT NULL,
+                           customer_customer_id  INT(8)
+);
+ALTER TABLE insurance
+    ADD CONSTRAINT ch_inh_insurance CHECK ( insurance_type IN (
+                                                               'A',
+                                                               'H'
+        ) );
+
+ALTER TABLE insurance ADD CONSTRAINT insurance_pk PRIMARY KEY ( insurance_id );
+
+CREATE TABLE invoice (
+                         invoice_id              INT(8) NOT NULL,
+                         invoice_amount          DECIMAL(6, 2) NOT NULL,
+                         invoice_due_date        DATE NOT NULL,
+                         insurance_insurance_id  INT(8) NOT NULL
+);
+ALTER TABLE invoice ADD CONSTRAINT invoice_pk PRIMARY KEY ( invoice_id );
+
+CREATE TABLE payment (
+                         payment_id    INT(8) NOT NULL,
+                         payment_date  DATE NOT NULL,
+                         method        CHAR(2) NOT NULL
+);
+ALTER TABLE payment ADD CONSTRAINT payment_pk PRIMARY KEY ( payment_id );
+
+CREATE TABLE vehicle (
+                         vehicle_id                   INT(8) NOT NULL,
+                         vin                          CHAR(17) NOT NULL,
+                         vehicle_year                 INT(4) NOT NULL,
+                         vehicle_status               CHAR(1) NOT NULL,
+                         auto_insurance_insurance_id  INT(8) NOT NULL
+);
+
+ALTER TABLE vehicle ADD CONSTRAINT vehicle_pk PRIMARY KEY ( vehicle_id );
+
+CREATE TABLE vehicle_driver (
+                                vehicle_id  INT(8) NOT NULL,
+                                driver_id   INT(8) NOT NULL
+);
+ALTER TABLE vehicle_driver ADD CONSTRAINT vehicle_driver_pk PRIMARY KEY ( vehicle_id,
+                                                                          driver_id );
+
+ALTER TABLE home
+    ADD CONSTRAINT home_insurance_fk FOREIGN KEY ( insurance_id )
+        REFERENCES insurance ( insurance_id );
+
+ALTER TABLE insurance
+    ADD CONSTRAINT insurance_customer_fk FOREIGN KEY ( customer_id )
+        REFERENCES customer ( customer_id );
+
+ALTER TABLE invoice
+    ADD CONSTRAINT invoice_insurance_fk FOREIGN KEY ( insurance_insurance_id )
+        REFERENCES insurance ( insurance_id );
+
+ALTER TABLE payment
+    ADD CONSTRAINT payment_invoice_fk FOREIGN KEY ( invoice_id )
+        REFERENCES invoice ( invoice_id );
+
+ALTER TABLE vehicle
+    ADD CONSTRAINT vehicle_auto_insurance_fk FOREIGN KEY ( insurance_insurance_id )
+        REFERENCES insurance ( insurance_id );
+
+ALTER TABLE vehicle_driver
+    ADD CONSTRAINT vehicle_driver_driver_fk FOREIGN KEY ( driver_id )
+        REFERENCES driver ( driver_id );
+
+
+ALTER TABLE vehicle_driver
+    ADD CONSTRAINT vehicle_driver_vehicle_fk FOREIGN KEY ( vehicle_id )
+        REFERENCES vehicle ( vehicle_id );
+
+alter table CUSTOMER add constraint C_CUSTOMER_CUSTOMER_ID check (CUSTOMER_ID between 10000000 and 99999999);
+alter table CUSTOMER add constraint C_CUSTOMER_CUSTOMER_GENDER check (CUSTOMER_GENDER in ('F','M'));
+alter table CUSTOMER add constraint C_CUSTOMER_MARTIAL check (MARTIAL in ('M','S','W'));
+alter table CUSTOMER add constraint C_CUSTOMER_CUSTOMER_TYPE check (CUSTOMER_TYPE in ('A','H','B'));
+
+alter table INSURANCE add constraint C_INSURANCE_INSURANCE_ID check (INSURANCE_ID between 10000000 and 99999999);
+alter table INSURANCE add constraint C_INSURANCE_INSURANCE_STATUS check (INSURANCE_STATUS in ('C','P'));
+
+alter table VEHICLE add constraint C_VEHICLE_VEHICLE_ID check (VEHICLE_ID between 10000000 and 99999999);
+alter table VEHICLE add constraint C_VEHICLE_VEHICLE_YEAR1 check (VEHICLE_YEAR between 1000 and 3000);
+alter table VEHICLE add constraint C_VEHICLE_VEHICLE_STATUS check (VEHICLE_STATUS in ('L','F','O'));
+
+alter table HOME add constraint C_HOME_HOME_ID check (HOME_ID between 10000000 and 99999999);
+alter table HOME add constraint C_HOME_HOME_TYPE check (HOME_TYPE in ('S','M','C','T'));
+alter table HOME add constraint C_HOME_SWIMMING_POOL check (SWIMMING_POOL in ('U','O','I','M'));
+
+alter table DRIVER add constraint C_DIRVER_DRIVER_ID check (DRIVER_ID between 10000000 and 99999999);
+
+
+alter table INVOICE add constraint C_INVOICE_INVOICE_ID check (INVOICE_ID between 10000000 and 99999999);
+alter table PAYMENT add constraint C_PAYMENT_PAYMENT_ID check (PAYMENT_ID between 10000000 and 99999999);
+alter table PAYMENT add constraint C_PAYMENT_METHOD check (METHOD in ('PP','CD','DB','CK'));
+
+
+insert into CUSTOMER values(10000001, 'Alice', 'Smith', 'Gold', 'New York', 'NY', 11021, 'M', 'S', 'A','000');
+insert into INSURANCE values(10000001, 20050909,20150909,2345.88, 'P', 'A', 10000001);
+insert into INSURANCE values(10000006,20050919,20050909,2345.88, 'P', 'H', 10000001);
+insert into VEHICLE values(10000001, 'LFV5A14B8Y3073501', 2019, 'F', 10000001);
+insert into HOME values(10000005, 20081110, 900, 100, 'S', '1', '0','M','1',10000001);
+insert into DRIVER values(10000001, 100000001, 'David', 'Casi', 19830409);
+insert into VEHICLE_DRIVER values(10000001,10000001);
+insert into INVOICE values(10000001, 200, 20151010,10000001);
+
+insert into PAYMENT values(10000001,20151009,'PP',10000001);
